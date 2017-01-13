@@ -1,0 +1,16 @@
+{
+	"name": "Replace tab url",
+	"version": "0.1.0",
+	"manifest_version": 2,
+	"description": "開いているタブのURLを置換して更新",
+	"permissions": [
+		"tabs"
+	],
+	"background": {
+		"persistent": false,
+		"scripts": ["background.js"]
+	},
+	"browser_action": {
+		"default_title": "開いているタブのURLを置換して更新"
+	}
+}
