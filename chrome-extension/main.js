@@ -56,4 +56,5 @@ chrome.tabs.query({}, tabs => {
 	document.getElementById("replace").addEventListener("click", replace);
 
 	updateResult();
+	elem_search_text.focus();
 });
