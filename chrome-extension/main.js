@@ -4,17 +4,22 @@ chrome.tabs.query({}, tabs => {
 	const elem_replacement_text = document.getElementById("replacement_text");
 	const elem_result = document.getElementById("result");
 
+	const findReplaceTargetTab = (tabs, search_text, replacement_text) => {
+		return tabs.filter(tab => {
+			return tab.url.includes(search_text);
+		}).map(tab => {
+			const newUrl = tab.url.split(search_text).join(replacement_text);
+			return {tab, newUrl};
+		});
+	};
+
 	const updateResult = () => {
 		const search_text = elem_search_text.value;
 		elem_result.innerText = "";
 		const replacement_text = elem_replacement_text.value;
-		tabs.forEach(tab => {
-			const currentUrl = tab.url;
-			if (currentUrl.includes(search_text)) {
-				const newUrl = currentUrl.split(search_text).join(replacement_text);
-				const resultItem = createResultItem(tab.title, currentUrl, newUrl);
-				elem_result.appendChild(resultItem);
-			}
+		findReplaceTargetTab(tabs, search_text, replacement_text).forEach(({tab, newUrl}) => {
+			const resultItem = createResultItem(tab.title, tab.url, newUrl);
+			elem_result.appendChild(resultItem);
 		});
 	};
 
@@ -43,14 +48,10 @@ chrome.tabs.query({}, tabs => {
 		const search_text = elem_search_text.value;
 		if (search_text === "") return;
 		const replacement_text = elem_replacement_text.value;
-		tabs.forEach(tab => {
-			const currentUrl = tab.url;
-			if (currentUrl.includes(search_text)) {
-				const newUrl = currentUrl.split(search_text).join(replacement_text);
-				chrome.tabs.update(tab.id, {
-					url: newUrl
-				});
-			}
+		findReplaceTargetTab(tabs, search_text, replacement_text).forEach(({tab, newUrl}) => {
+			chrome.tabs.update(tab.id, {
+				url: newUrl
+			});
 		});
 	};
 	document.getElementById("replace").addEventListener("click", replace);
